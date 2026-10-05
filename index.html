@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Screener · Futures Room</title>
+  <link rel="stylesheet" href="css/room.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#room" data-nav="room">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="12" width="4" height="8" rx="1" />
+        <rect x="10" y="6" width="4" height="14" rx="1" />
+        <rect x="17" y="9" width="4" height="11" rx="1" />
+      </svg>
+      <span>Live Screener</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <button type="button" data-nav="room" class="active">Live Screener</button>
+      <button type="button" data-nav="screener">Screener</button>
+      <button type="button" data-nav="analytics">Analytics</button>
+      <button type="button" data-nav="journal">Journal</button>
+      <button type="button" data-nav="settings">Settings</button>
+    </nav>
+    <div class="top-meta">
+      <span class="live-pill" title="Prices are simulated in the browser"><i></i> Simulated</span>
+      <span class="avatar" aria-hidden="true">D</span>
+    </div>
+  </header>
+
+  <div id="view-room" data-view-panel="room" class="room">
+    <aside class="watch">
+      <div class="watch-head">
+        <div class="watch-title">
+          <span>Futures Room</span>
+          <span id="watch-count" class="muted"></span>
+        </div>
+        <input id="watch-filter" type="search" placeholder="Filter symbols" autocomplete="off" aria-label="Filter symbols" />
+      </div>
+      <div id="watchlist" class="watchlist" role="listbox" aria-label="Symbols"></div>
+    </aside>
+
+    <section class="stage">
+      <div class="toolbar">
+        <div class="tb-id">
+          <div class="sym-line">
+            <span id="tb-symbol">NQ</span>
+            <span id="tb-name" class="muted"></span>
+          </div>
+          <div class="bidask">
+            <span>Bid <b id="tb-bid"></b></span>
+            <span>Ask <b id="tb-ask"></b></span>
+          </div>
+        </div>
+        <div class="tb-px">
+          <div id="tb-last" class="last">—</div>
+          <div id="tb-chg" class="chg">—</div>
+        </div>
+        <div class="tfs" id="tb-tfs" role="group" aria-label="Timeframe"></div>
+      </div>
+      <div class="chart-wrap" id="chart-wrap">
+        <canvas id="chart" aria-label="Candlestick chart"></canvas>
+        <div id="tip" class="tip" hidden></div>
+      </div>
+    </section>
+
+    <aside class="dock">
+      <div class="tabs" role="tablist" aria-label="Market detail">
+        <button type="button" class="active" data-tab="screener" role="tab">Live Screener</button>
+        <button type="button" data-tab="flow" role="tab">Order Flow</button>
+        <button type="button" data-tab="dom" role="tab">DOM</button>
+      </div>
+      <div id="dock-body" class="dock-body"></div>
+    </aside>
+  </div>
+
+  <section id="view-screener" data-view-panel="screener" class="page" hidden>
+    <div class="page-head">
+      <div>
+        <h1>Screener</h1>
+        <p>Session snapshot for every contract in the room.</p>
+      </div>
+      <input id="screen-search" type="search" placeholder="Search symbol or name" aria-label="Search screener" />
+    </div>
+    <div class="chips" id="group-chips"></div>
+    <div class="table-wrap">
+      <table id="screen-table">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="view-analytics" data-view-panel="analytics" class="page" hidden>
+    <div class="page-head">
+      <div>
+        <h1>Analytics</h1>
+        <p>How the simulated session is trading across the room.</p>
+      </div>
+    </div>
+    <div id="analytics-cards" class="cards"></div>
+    <div class="panel-card">
+      <h2>Session volume</h2>
+      <canvas id="analytics-chart" height="280" aria-label="Volume by symbol"></canvas>
+    </div>
+  </section>
+
+  <section id="view-journal" data-view-panel="journal" class="page" hidden>
+    <div class="page-head">
+      <div>
+        <h1>Journal</h1>
+        <p>Notes stay in this browser. Log a signal from the room or write one here.</p>
+      </div>
+    </div>
+    <div class="journal-layout">
+      <form id="journal-form" class="panel-card journal-form">
+        <label>Symbol
+          <select id="j-symbol"></select>
+        </label>
+        <label>Side
+          <select id="j-side">
+            <option>Long</option>
+            <option>Short</option>
+          </select>
+        </label>
+        <label>Price
+          <input id="j-price" inputmode="decimal" required />
+        </label>
+        <label>Note
+          <textarea id="j-note" rows="4" required placeholder="What did the tape do?"></textarea>
+        </label>
+        <button type="submit" class="primary">Add to journal</button>
+      </form>
+      <div id="journal-list" class="journal-list"></div>
+    </div>
+  </section>
+
+  <section id="view-settings" data-view-panel="settings" class="page" hidden>
+    <div class="page-head">
+      <div>
+        <h1>Settings</h1>
+        <p>Display and playback for the simulated room.</p>
+      </div>
+    </div>
+    <form id="settings-form" class="panel-card settings-form">
+      <label class="slider">Update speed
+        <input id="set-speed" type="range" min="1" max="5" value="3" />
+        <span id="set-speed-label">Normal</span>
+      </label>
+      <label class="check"><input id="set-volume" type="checkbox" checked /> Show volume under the chart</label>
+      <label class="check"><input id="set-compact" type="checkbox" /> Compact watchlist</label>
+      <div class="settings-actions">
+        <button type="button" id="set-reset">Reset simulated session</button>
+        <button type="button" id="set-clear" class="danger">Clear journal</button>
+      </div>
+      <p class="fine">Prices, prints, depth, and signals are generated in the browser. Nothing is a live market, and resting DOM prices are not orders sent to an exchange.</p>
+    </form>
+  </section>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+  <script src="js/room.js"></script>
+</body>
+</html>
